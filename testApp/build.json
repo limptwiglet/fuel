@@ -1,0 +1,8 @@
+{
+	// The requirments for the application
+	requires: [
+		'http://code.jquery.com/jquery-1.7.1.js',
+		'http://cloud.github.com/downloads/emberjs/ember.js/ember-latest.min.js',
+		'http://cloud.github.com/downloads/emberjs/data/ember-data-latest.js'
+	]
+}
