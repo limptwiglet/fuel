@@ -6,7 +6,7 @@
   "homepage": "markgerrard.com/fuel",
   "repository": {
     "type": "git",
-    "url": "ssh://git@bitbucket.org/limptwiglet/fuel.git"
+    "url": "ssh://git@github.org/limptwiglet/fuel.git"
   },
   "engines": {
     "node": "~0.6.5"
