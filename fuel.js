@@ -27,18 +27,50 @@ if (args[0] === 'build') {
 	build(path);
 }
 
+// Fuel constructor function
 function Fuel (path, config) {
 	this.path = path;
 	this.config = config || this._getConfig(path);
 }
 
+// Prototype shortcut
 Fuel.p = Fuel.prototype;
 
-Fuel.p.build = function () {
+
+// Build will take an application path and build any
+// assets it finds at the location and output the files
+// to the build diretory
+Fuel.p.build = function (path, cb) {
+	
+}
+
+// Given a path it will build any files at the location based on its config
+Fuel.p.buildDirectory = function (path, cb) {
+	
+}
+
+Fuel.p._getConfig = function (path, cb) {
 
 }
 
-Fuel.p._getConfig = function () {
+Fuel.p._getDependancies = function (depPaths, cb) {
+	var done = 0;
+	var deps = [];
+
+	var depDone = function (file, i) {
+
+	};
+
+	depPaths.forEach(function (dep, i) {
+		if (/^[http|https]/.test(dep)) {
+			 
+		}
+	});
+}
+
+// Makes a build directory at the give path unless one
+// already exists
+Fuel.p._makeBuildDir = function (path, cb) {
 
 }
 
