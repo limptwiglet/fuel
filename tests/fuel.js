@@ -4,7 +4,9 @@ var expect = require('chai').expect;
 
 
 describe('Fuel', function () {
-	describe('#Constructor', function () {
+	var appPath = './exampleApp/';
+
+	describe('Constructor', function () {
 		var f = fuel('./', {});
 	
 		it('should have a path', function () {
@@ -17,45 +19,50 @@ describe('Fuel', function () {
 	});
 
 
-	describe('#Config', function () {
+	describe('_getConfig', function () {
 		var f = fuel('./', {});
 
-		it('should find a config', function (done) {
-			f._getConfig('../', function (conf) {
+		it('should not find a config', function (done) {
+			f._getConfig('../', function (err, conf) {
+				expect(err).to.exist;
 				done();
 			});
 		});
 
-		it('should return a config object', function () {
-			f._getConfig('../', function (conf) {
-				expect(conf).to.be.a('object');
+		it('should find a config', function (done) {
+			f._getConfig(appPath, function (err, conf) {
+				expect(err).to.not.exist;
+				done();
+			});
+		});
+
+		it('should return a config object', function (done) {
+			f._getConfig(appPath, function (err, conf) {
+				expect(conf).to.be.ok;
 				done();
 			});
 		});
 	});
 
 
-	describe('#Build', function () {
-		var appDir = '../testApp/';
-		var f = fuel(appDir, {});
-		var deps = [
-			'http://code.jquery.com/jquery-1.7.1.js',
-			'http://cloud.github.com/downloads/emberjs/ember.js/ember-0.9.5.js'
-		];
+	describe('build', function () {
+		var f = fuel(appPath, {});
 
-		it('should get application dependancies', function (done) {
-			f._getDependancies(deps, function (depFiles) {
-				exepct(depFiles.length).to.equal(deps.length);
+		it('should fetch hosted dependancies', function (done) {
+			f._getDependancies(['http://code.jquery.com/jquery-1.7.1.js'], function (depFiles) {
+				expect(depFiles).to.have.length(1);
 				done();
 			});	
 		});
-		
-		// Destroy any existing build directory
-		before(function(done) {
-			fs.unlink(appDir + 'build', function (err) {
+
+
+		it('should fetch local dependancies', function (done) {
+			f._getDependancies([appPath + 'main.js'], function (depFiles) {
+				expect(depFiles).to.have.length(1);
 				done();
 			});
 		});
+
 
 		it('should create build dir', function (done) {
 			f._makeBuildDir(appDir, function () {
