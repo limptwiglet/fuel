@@ -21,6 +21,22 @@ var path = '.';
 var ACCEPT_EXT = /(\.js|html|handlebars)$/;
 
 
+var FILE_HANDLER = {
+	'javascript': function (opts, file) {
+		return file;	
+	},
+
+	'html': function (opts, file) {
+		file = file.replace(/"/g, '\\"');
+		file = file.replace(/(\r\n|[\r\n])/g, '');
+		
+		file = 'Ember.TEMPLATES[\'' + opts.fileName + '\'] = Ember.Handlebars.compile("' + file + '");';
+
+		return file;	
+	}
+};
+
+
 if (args[0] === 'build') {
 	build(path);
 }
@@ -59,45 +75,58 @@ Fuel.p._getConfig = function (path, cb) {
 	});
 }
 
-Fuel.p._getDependancies = function (depPaths, cb) {
-	var done = 0;
-	var deps = [];
+Fuel.p._buildFile = function (opts, cb) {
+	var type = opts.type;
+	var data = opts.data;
 
-	var depDone = function (file, i) {
-		deps[i] = file;
+	if (type && data) {
+		if (FILE_HANDLER[type]) {
+			cb(null, FILE_HANDLER[type](opts, data));
+		} else {
+			cb(new Error('No handler for '+ type));
+		}
+	}
+}
+
+Fuel.p._getFiles = function (filePaths, cb) {
+	var done = 0;
+	var files = [];
+
+	var fileDone = function (file, i) {
+		files[i] = file;
 		done++;
 
-		if (done >= depPaths.length) {
-			cb(deps);
+		if (done >= filePaths.length) {
+			cb(files);
 		}
 	};
 
-	depPaths.forEach(function (dep, i) {
-		if (/^[http|https]/.test(dep)) {
-			var file = '';
-			dep = url.parse(dep);
+	filePaths.forEach(function (file, i) {
+		if (/^[http|https]/.test(file)) {
+			var data = '';
+			file = url.parse(file);
 
 			var req = http.request({
-				host: dep.host,
-				path: dep.path,
+				host: file.host,
+				path: file.path,
 				method: 'GET'
 			}, function (res) {
 				res.setEncoding('utf8');
-				res.on('data', function (data) {
-					file+= data;
+				res.on('data', function (chunk) {
+					data+= chunk;
 				})
 
 				res.on('end', function () {
-					depDone(file, i);
+					fileDone(data, i);
 				});
 			});
 
 			req.end();
 		} else {
-			fs.readFile(dep, 'utf-8', function (err, data) {
+			fs.readFile(file, 'utf-8', function (err, data) {
 				if (err) throw err;
 
-				depDone(data, i);
+				fileDone(data, i);
 			});
 		}
 	});
@@ -106,7 +135,14 @@ Fuel.p._getDependancies = function (depPaths, cb) {
 // Makes a build directory at the give path unless one
 // already exists
 Fuel.p._makeBuildDir = function (path, cb) {
-
+		// First check that the build dir dosnt already exist
+		fs.stat(path + 'build', function (err, stat) {
+				if (err) {
+						fs.mkdir(path + 'build', cb);
+				} else {
+						cb();
+				}
+		});
 }
 
 
