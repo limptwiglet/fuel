@@ -55,12 +55,62 @@ Fuel.p = Fuel.prototype;
 // assets it finds at the location and output the files
 // to the build diretory
 Fuel.p.build = function (path, cb) {
+	this.buildDirectory(path, cb);
 }
 
 // Given a path it will build any files at the location based on its config
+// It will output files in this order:
+// - setup.js - Setup application namespace (Optional for sub-modules)
+// - dirs/ - Run through each directory building it
+// - init.js - Initializes the app/sub-module
 Fuel.p.buildDirectory = function (path, cb) {
-	this._getConfig(path, function () {
+	var _this = this;
 
+	this._getConfig(path, function (err, config) {
+		var total = 0;
+		var dirs = [];
+		var files = [];
+		var processedFiles = [];
+
+		var processPaths = function () {
+			dirs.forEach(function (dir, i) {
+				_this.buildDirectory(path + dir);
+			});
+
+			files.forEach(function (file, i) {
+				_this._buildFile(path + file, function (err, data) {
+				});
+			});
+		};
+
+		fs.readdir(path, function (err, dirFiles) {
+			if (err) throw err;
+			total = dirFiles.length;
+
+			dirFiles.forEach(function (dirFile, i) {
+				fs.stat(path + dirFile, function (err, stat) {
+					if (err) throw err;
+
+					if (stat.isFile()) {
+						if (dirFile === 'setup.js') {
+							files.splice(0, 0, dirFile);
+						} else if (dirFile === 'init.js') {
+							files.push(dirFile)
+						} else {
+							files.splice(-1, 0, dirFile);
+						}
+					} else if (stat.isDirectory()) {
+						dirs.push(dirFile);
+					} else {
+						total--;	
+					}
+
+					if (dirs.length + files.length >= total) {
+						processPaths();
+					}
+				});
+			});
+		});
 	});
 }
 

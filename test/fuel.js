@@ -25,6 +25,7 @@ describe('Fuel', function () {
 		it('should not find a config', function (done) {
 			f._getConfig('../', function (err, conf) {
 				expect(err).to.exist;
+				expect(conf).to.not.exist;
 				done();
 			});
 		});
@@ -32,6 +33,7 @@ describe('Fuel', function () {
 		it('should find a config', function (done) {
 			f._getConfig(appPath, function (err, conf) {
 				expect(err).to.not.exist;
+				expect(conf).to.exist;
 				done();
 			});
 		});
@@ -57,7 +59,7 @@ describe('Fuel', function () {
 
 
 		it('should get local files', function (done) {
-			f._getFiles([appPath + 'main.js'], function (depFiles) {
+			f._getFiles([appPath + 'setup.js'], function (depFiles) {
 				expect(depFiles).to.have.length(1);
 				done();
 			});
@@ -159,14 +161,14 @@ describe('Fuel', function () {
 				});
 			});
 		});
+	});
 
 
-		it('should output application files to build dir', function (done) {
-			f.build(appPath, function () {
-				fs.readdir(appDir + 'build', function (err, files) {
-					expect(err).to.not.be.ok;
-					expect(files.indexOf('app.js')).to.be.above(-1);
-				});
+	describe('build', function () {
+		var f = fuel('../', {});
+		it('should add setup.js to top and init.js to bottom', function (done) {
+			f.build('./exampleApp/', function () {
+				done();	
 			});
 		});
 	});
