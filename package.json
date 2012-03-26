@@ -1,19 +1,20 @@
 {
-  "author": "Mark Gerrard <hello@markgerrard.com> (http://markgerrard.com)",
-  "name": "fuel",
-  "description": "A ember build tool",
-  "version": "0.0.1",
-  "homepage": "markgerrard.com/fuel",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@github.org/limptwiglet/fuel.git"
-  },
-  "engines": {
-    "node": "~0.6.5"
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
-	"chai": ">=0.5.1"
-  }
+	"author": "Mark Gerrard <hello@markgerrard.com> (http://markgerrard.com)",
+	"name": "fuel",
+	"description": "A ember build tool",
+	"version": "0.0.1",
+	"homepage": "markgerrard.com/fuel",
+	"repository": {
+		"type": "git",
+		"url": "ssh://git@github.org/limptwiglet/fuel.git"
+	},
+	"engines": {
+		"node": "~0.6.5"
+	},
+	"dependencies": {
+		"connect": ">=2.0.3"
+	},
+	"devDependencies": {
+		"chai": ">=0.5.1"
+	}
 }
