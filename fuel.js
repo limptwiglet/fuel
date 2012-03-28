@@ -18,6 +18,8 @@ var url = require('url');
 var args = process.argv.slice(2);
 var path = '.';
 
+var server = require('./lib/server');
+
 var ACCEPT_EXT = /(\.js|html|handlebars)$/;
 
 
@@ -25,6 +27,10 @@ var ACCEPT_EXT = /(\.js|html|handlebars)$/;
 
 if (args[0] === 'build') {
 	build(path);
+}
+
+if (args[0] === 'server') {
+	server();
 }
 
 // Fuel constructor function
