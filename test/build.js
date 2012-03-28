@@ -70,6 +70,9 @@ describe('build', function () {
 
 	describe('buildDirectory', function () {
 		it('should top and tail output with setup.js and init.js', function (done) {
+			build.buildDirectory({
+				path: './exampleApp/'
+			});
 			build.buildDirectory('./exampleApp/', function (err, data) {
 				data = data.replace(/\n/g, '');
 				expect(err).to.not.exist;
